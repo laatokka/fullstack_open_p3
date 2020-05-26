@@ -66,6 +66,9 @@ const generateRandomID = () => {
     return Math.floor(Math.random() * Math.floor(10000000));
 }
 
+app.get('/', (req, res) => {
+    res.redirect('/api/persons')
+})
 
 app.get('/api/persons', (req, res) => {
     res.send(persons)
