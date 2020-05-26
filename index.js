@@ -1,42 +1,56 @@
 const express = require('express')
-
+const cors = require('cors')
 const app = express()
+const morgan = require('morgan')
 
+app.use(cors())
 app.use(express.json())
 
-let persons =
-    [
-        {
-            "name": "Ada Lovelace",
-            "number": "39-44-5323523",
-            "id": 1
-        },
-        {
-            "name": "Dan Abramov",
-            "number": "12-43-234345",
-            "id": 2
-        },
-        {
-            "name": "Mary Poppendieck",
-            "number": "39-23-6423122",
-            "id": 3
-        },
-        {
-            "name": "Adam Merigold",
-            "number": "12-23-8875",
-            "id": 4
-        },
-        {
-            "name": "Adam Hasselnut",
-            "number": "822-8223-8334",
-            "id": 5
-        },
-        {
-            "name": "Banjo Guitarro",
-            "number": "407741123",
-            "id": 6
-        }
-    ]
+const getPost = (req, res, next) => {
+    next()
+}
+
+morgan.token('post-contents', (req) => {
+    return JSON.stringify(req.body)
+})
+
+app.use(getPost)
+
+//manual tiny configuration + POST
+app.use(morgan(':method :url :status :res[content-length] - :response-time  :post-contents'))
+
+let persons = [
+    {
+        "name": "Ada Lovelace",
+        "number": "39-44-5323523",
+        "id": 1
+    },
+    {
+        "name": "Dan Abramov",
+        "number": "12-43-234345",
+        "id": 2
+    },
+    {
+        "name": "Mary Poppendieck",
+        "number": "39-23-6423122",
+        "id": 3
+    },
+    {
+        "name": "Adam Merigold",
+        "number": "12-23-8875",
+        "id": 4
+    },
+    {
+        "name": "Adam Hasselnut",
+        "number": "822-8223-8334",
+        "id": 5
+    },
+    {
+        "name": "Banjo Guitarro",
+        "number": "407741123",
+        "id": 6
+    }
+]
 
 
 const userExists = (name) => {
@@ -83,7 +97,7 @@ app.post('/api/persons', (req, res) => {
     const id = generateRandomID()
     const body = req.body
 
-    if (!body.content) {
+    if (!body) {
         return res.status(400).json({
             error: "No content!"
         })
@@ -95,7 +109,6 @@ app.post('/api/persons', (req, res) => {
         return res.status(409).json({
             error: "Name is already in the phonebook!"
         })
-
     }
 
     if (!name || !number) {
@@ -113,11 +126,10 @@ app.post('/api/persons', (req, res) => {
 app.delete('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
     persons = persons.filter(p => p.id !== id)
-    console.log(persons)
     res.status(204).end()
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 
 app.listen(PORT, () => {
     console.log(`Server is now up running on port ${PORT}`)

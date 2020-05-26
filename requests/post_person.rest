@@ -3,6 +3,6 @@ Content-Type: application/json
 
 {
     "content" : "POSTING A USER",
-    "name" : "Banjo Guitarro",
-    "number" : "123"
+    "name" : "Mamba",
+    "number" : "1700"
 }
