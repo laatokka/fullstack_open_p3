@@ -5,6 +5,7 @@ const morgan = require('morgan')
 
 app.use(cors())
 app.use(express.json())
+app.use(express.static('build'))
 
 const getPost = (req, res, next) => {
     next()
@@ -66,15 +67,8 @@ const generateRandomID = () => {
     return Math.floor(Math.random() * Math.floor(10000000));
 }
 
-app.get('/', (req, res) => {
-    res.redirect('/api/persons')
-})
-
-app.get('/api/persons', (req, res) => {
-    res.send(persons)
-})
-
 app.get('/api/persons/:id', (req, res) => {
+    console.log('from persons / id')
     const id = Number(req.params.id)
     const person = persons.find((p) => p.id === id)
 
@@ -84,6 +78,15 @@ app.get('/api/persons/:id', (req, res) => {
         res.status(404).send()
     }
 })
+
+app.get('/', (req, res) => {
+    res.redirect('/api/persons')
+})
+
+app.get('/api/persons', (req, res) => {
+    res.send(persons)
+})
+
 
 app.get('/info', (req, res) => {
     const numOfRecords = persons.length
@@ -130,6 +133,14 @@ app.delete('/api/persons/:id', (req, res) => {
     const id = Number(req.params.id)
     persons = persons.filter(p => p.id !== id)
     res.status(204).end()
+})
+
+app.put('/api/persons/:id', (req, res) => {
+    const id = Number(req.params.id)
+    const person = persons.find(p => p.id === id)
+    person.id = id
+
+    res.send(person)
 })
 
 const PORT = process.env.PORT || 3001
